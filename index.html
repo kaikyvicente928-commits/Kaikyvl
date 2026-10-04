@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kaikyvl - Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: #000;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* TELA DE LOGIN */
+        .tela-login {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-box {
+            background: #0c0c0c;
+            border-radius: 20px;
+            border: 1px solid #ff2ea8;
+            box-shadow: 0 0 25px #ff2ea840;
+            padding: 40px 30px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .nome-usuario {
+            color: #ff2ea8;
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            margin-bottom: 35px;
+            text-shadow: 0 0 15px #ff2ea860;
+        }
+
+        .icone-cadeado {
+            font-size: 50px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 10px #ff2ea8);
+        }
+
+        .input-senha {
+            width: 100%;
+            padding: 15px 20px;
+            background: #1a1a1a;
+            border: 1px solid #ff2ea850;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 18px;
+            text-align: center;
+            letter-spacing: 5px;
+            outline: none;
+            margin-bottom: 20px;
+        }
+
+        .input-senha:focus {
+            border-color: #ff2ea8;
+            box-shadow: 0 0 12px #ff2ea850;
+        }
+
+        .btn-entrar {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(90deg, #cc0066, #ff2ea8, #cc0066);
+            background-size: 200% 100%;
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-entrar:hover {
+            box-shadow: 0 0 20px #ff2ea860;
+            transform: translateY(-2px);
+        }
+
+        .mensagem {
+            margin-top: 15px;
+            font-size: 14px;
+            height: 20px;
+        }
+
+        .erro {
+            color: #ff4466;
+        }
+
+        /* TELA DO PAINEL */
+        .tela-painel {
+            display: none;
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .painel {
+            background: #0c0c0c;
+            border-radius: 20px;
+            border: 1px solid #2a2a2a;
+            padding: 25px 20px;
+            min-height: 600px;
+        }
+
+        .painel-wrapper {
+            display: flex;
+            gap: 15px;
+        }
+
+        .barra-lateral {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .btn-aba {
+            width: 44px;
+            height: 44px;
+            background: #1a1a1a;
+            border-radius: 10px;
+            border: none;
+            color: #888;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-aba.ativo {
+            background: #2a2a2a;
+            color: #fff;
+        }
+
+        .area-conteudo {
+            flex: 1;
+            position: relative;
+            min-height: 520px;
+        }
+
+        .aba {
+            display: none;
+            animation: aparecer 0.2s ease;
+        }
+
+        .aba.visivel {
+            display: block;
+        }
+
+        @keyframes aparecer {
+            from { opacity: 0; transform: translateX(5px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .titulo-painel {
+            color: #fff;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            letter-spacing: 1px;
+        }
+
+        .item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #1a1a1a;
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+        }
+
+        .item-texto h4 {
+            color: #fff;
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 3px;
+        }
+
+        .item-texto p {
+            color: #666;
+            font-size: 11px;
+        }
+
+        .toggle {
+            width: 44px;
+            height: 24px;
+            background: #333;
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .toggle.ativo {
+            background: #fff;
+        }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: #555;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .toggle.ativo::after {
+            left: 22px;
+            background: #000;
+        }
+
+        .fov-container {
+            margin-top: 20px;
+        }
+
+        .fov-topo {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .fov-label {
+            color: #666;
+            font-size: 13px;
+        }
+
+        .fov-valor {
+            color: #fff;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 4px;
+            background: #2a2a2a;
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #fff;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .btn-jogo {
+            width: 100%;
+            background: #1a1a1a;
+            border: none;
+            border-radius: 12px;
+            padding: 18px;
+            color: #fff;
+            font-size: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-jogo:hover {
+            background: #2a2a2a;
+        }
+
+        .botoes-inferiores {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 10px;
+        }
+
+        .btn-pequeno {
+            width: 40px;
+            height: 40px;
+            background: #1a1a1a;
+            border-radius: 50%;
+            border: none;
+            color: #888;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-pequeno:hover {
+            background: #2a2a2a;
+            color: #fff;
+        }
+
+        .rodape {
+            text-align: center;
+            margin-top: 10px;
+            color: #444;
+            font-size: 12px;
+        }
+
+        .item-final {
+            background: transparent;
+            border: 1px solid #2a2a2a;
+        }
+
+        .sair {
+            margin-top: 15px;
+            background: transparent;
+            border: 1px solid #ff2ea850;
+            color: #ff2ea8;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .sair:hover {
+            background: #ff2ea815;
+        }
+
+        /* ÁREA DE MENSAGEM DE SUCESSO */
+        .mensagem-sucesso {
+            margin-top: 20px;
+            background: #0f2a1a;
+            border: 1px solid #4aff9f50;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            display: none;
+            animation: aparecer 0.3s ease;
+        }
+
+        .mensagem-sucesso.mostrar {
+            display: block;
+        }
+
+        .icone-sucesso {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .texto-sucesso {
+            color: #4aff9f;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .subtexto-sucesso {
+            color: #88cc99;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TELA DE LOGIN -->
+    <div class="tela-login" id="telaLogin">
+        <div class="login-box">
+            <div class="icone-cadeado">🔒</div>
+            <h1 class="nome-usuario">Kaikyvl</h1>
+            <input type="password" id="senhaInput" class="input-senha" placeholder="DIGITE A SENHA">
+            <button class="btn-entrar" onclick="verificarSenha()">ENTRAR</button>
+            <div class="mensagem erro" id="mensagemErro"></div>
+        </div>
+    </div>
+
+    <!-- TELA DO PAINEL -->
+    <div class="tela-painel" id="telaPainel">
+        <div class="painel">
+            <div class="painel-wrapper">
+                <div class="barra-lateral">
+                    <button class="btn-aba ativo" onclick="trocarAba(0)">!</button>
+                    <button class="btn-aba" onclick="trocarAba(1)">⚙</button>
+                    <button class="btn-aba" onclick="trocarAba(2)">💉</button>
+                    <button class="btn-aba" onclick="trocarAba(3)">📊</button>
+                </div>
+
+                <div class="area-conteudo">
+                    <!-- ABA 1: AIMBOT -->
+                    <div class="aba visivel" id="aba-0">
+                        <h2 class="titulo-painel">AIMBOT</h2>
+                        <div class="item">
+                            <div class="item-texto"><h4>AIMBOT LEGIT</h4><p>ASSISTÊNCIA SUAVE DE MIRA</p></div>
+                            <div class="toggle" onclick="alternar(this)"></div>
+                        </div>
+                        <div class="item">
+                            <div class="item-texto"><h4>AIMSMOOTH</h4><p>CONTROLE SUAVE DE MIRA</p></div>
+                            <div class="toggle" onclick="alternar(this)"></div>
+                        </div>
+                        <div class="item">
+                            <div class="item-texto"><h4>PRECISION</h4><p>PRECISÃO DA MIRA</p></div>
+                            <div class="toggle" onclick="alternar(this)"></div>
+                        </div>
+                        <div class="item">
+                            <div class="item-texto"><h4>AIM 70%</h4><p>AJUSTE DE MIRA 70%</p></div>
+                            <div class="toggle" onclick="alternar(this)"></div>
+                        </div>
+                        <div class="fov-container">
+                            <div class="fov-topo"><span class="fov-label">FOV SIZE</span><span class="fov-valor" id="fov-valor">1.0</span></div>
+                            <p style="color:#666; font-size:11px; margin-bottom:8px;">CAMPO DE VISÃO DA ASSISTÊNCIA</p>
+                            <input type="range" class="slider" id="fov-slider" value="100" min="0" max="100" oninput="atualizarFov(this.value)">
+                        </div>
+                    </div>
+
+                    <!-- ABA 2: OTIMIZAÇÃO -->
+                    <div class="aba" id="aba-1">
+                        <h2 class="titulo-painel">OTIMIZAÇÃO</h2>
+                        <div class="item">
+                            <div class="item-texto"><h4>NO INPUT-LAG</h4><p>REDUZ LATÊNCIA DE ENTRADA</p></div>
+                            <div class="toggle" onclick="alternar(this)"></div>
+                        </div>
+                        <div class="item">
+                            <div class="item-texto"><h4>FPS BOOST</h4><p>AUMENTA TAXA DE QUADROS</p></div>
+                            <div class="toggle" onclick="alternar(this)"></div>
+                        </div>
+                        <div class="item">
+                            <div class="item-texto"><h4>CLEAR GRAPHICS DRIVE</h4><p>LIMPA CACHE DE GRÁFICOS</p></div>
+                            <div class="toggle" onclick="alternar(this)"></div>
+                        </div>
+                    </div>
+
+                    <!-- ABA 3: INJECTOR -->
+                    <div class="aba" id="aba-2">
+                        <h2 class="titulo-painel">INJECTOR</h2>
+                        <button class="btn-jogo" onclick="mostrarSucesso()">✈ FREE FIRE</button>
+                        <button class="btn-jogo" onclick="mostrarSucesso()">🎮 FREE FIRE MAX</button>
+                        
+                        <div class="botoes-inferiores">
+                            <button class="btn-pequeno" onclick="clicouBotao(this)">🎵</button>
+                            <button class="btn-pequeno" onclick="clicouBotao(this)">📷</button>
+                        </div>
+                        
+                        <!-- MENSAGEM DE SUCESSO -->
+                        <div class="mensagem-sucesso" id="mensagemSucesso">
+                            <div class="icone-sucesso">✅</div>
+                            <div class="texto-sucesso">Auxílio funcionando com sucesso!</div>
+                            <div class="subtexto-sucesso">Boa sorte, Kaikyvl! 🔥</div>
+                        </div>
+                        
+                        <div class="rodape">Kaikyvl</div>
+                    </div>
+
+                    <!-- ABA 4: CONFIG -->
+                    <div class="aba" id="aba-3">
+                        <h2 class="titulo-painel">CONFIG</h2>
+                        <div class="item">
+                            <div class="item-texto"><h4>AUTO HEADSHOT</h4><p>AJUSTE AUTOMÁTICO DE MIRA</p></div>
+                            <div class="toggle" onclick="alternar(this)"></div>
+                        </div>
+                        <div class="item">
+                            <div class="item-texto"><h4>RECOIL CONTROL</h4><p>CONTROLE DE RECUO</p></div>
+                            <div class="toggle" onclick="alternar(this)"></div>
+                        </div>
+                        <div class="item">
+                            <div class="item-texto"><h4>STRAFE AUTO</h4><p>MOVIMENTO LATERAL AUTOMÁTICO</p></div>
+                            <div class="toggle" onclick="alternar(this)"></div>
+                        </div>
+                        <div class="item item-final">
+                            <div class="item-texto"><h4>PERFORMANCE READY</h4><p>CONFIGURAÇÕES DISPONÍVEIS</p></div>
+                            <span style="color:#888;">✓</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="sair" onclick="sair()">← SAIR</button>
+        </div>
+    </div>
+
+    <script>
+        const senhaCorreta = "2012";
+
+        function verificarSenha() {
+            const senhaDigitada = document.getElementById("senhaInput").value;
+            const mensagem = document.getElementById("mensagemErro");
+            
+            if (senhaDigitada === senhaCorreta) {
+                document.getElementById("telaLogin").style.display = "none";
+                document.getElementById("telaPainel").style.display = "block";
+            } else {
+                mensagem.textContent = "❌ SENHA INCORRETA!";
+            }
+        }
+
+        function sair() {
+            document.getElementById("telaPainel").style.display = "none";
+            document.getElementById("telaLogin").style.display = "flex";
+            document.getElementById("senhaInput").value = "";
+            document.getElementById("mensagemErro").textContent = "";
+            resetarMensagem();
+        }
+
+        function trocarAba(indice) {
+            const botoes = document.querySelectorAll('.btn-aba');
+            botoes.forEach(b => b.classList.remove('ativo'));
+            botoes[indice].classList.add('ativo');
+            
+            const abas = document.querySelectorAll('.aba');
+            abas.forEach(a => a.classList.remove('visivel'));
+            document.getElementById('aba-' + indice).classList.add('visivel');
+            
+            resetarMensagem();
+        }
+
+        function alternar(el) {
+            el.classList.toggle('ativo');
+        }
+
+        function atualizarFov(valor) {
+            document.getElementById('fov-valor').textContent = (valor / 100).toFixed(1);
+        }
+
+        function clicouBotao(el) {
+            el.style.transform = 'scale(0.95)';
+            setTimeout(() => el.style.transform = 'scale(1)', 150);
+        }
+
+        function resetarMensagem() {
+            document.getElementById('mensagemSucesso').classList.remove('mostrar');
+        }
+
+        function mostrarSucesso() {
+            resetarMensagem();
+            setTimeout(() => {
+                document.getElementById('mensagemSucesso').classList.add('mostrar');
+            }, 100);
+        }
+
+        // Permitir Enter para entrar
+        document.getElementById("senhaInput").addEventListener("keypress", function(e) {
+            if (e.key === "Enter") verificarSenha();
+        });
+    </script>
+</body>
+</html>
